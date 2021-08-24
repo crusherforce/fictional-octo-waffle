@@ -1,0 +1,82 @@
+package fiset.fenwicktree;
+
+/*
+**  A Fenwick Tree implementation which supports point updates and
+**  sum range queries.
+ */
+
+public class FenwickTree {
+
+    // this array contains the Fenwick tree ranges
+    private long[]  tree;
+
+    // create an empty Fenwick Tree
+    public FenwickTree(int sz) {
+        tree = new long[sz+1];
+    }
+
+    // make sure the 'values' array is one based meaning
+    // values[0] does not get used, O(n) construction
+    public FenwickTree(long[] values) {
+
+        if (values == null) {
+            throw new IllegalArgumentException("Values array can't be null");
+        }
+
+        // clone the values array since we manipulate the array
+        // in place destroying all its original content
+        this.tree = values.clone();
+
+        for (int i=0; i<tree.length; i++) {
+            int j = i + lsb(i);
+            if (j < tree.length) {
+                tree[j] += tree[i];
+            }
+        }
+    }
+
+    // Returns the value of the lest significant bit (LSB)
+    // lsb(108) = lsb(0b1101100) = 0b100 = 4
+    // lsb(108) = lsb(0b1101000) = 0b1000 = 8
+    // lsb(96)  = lsb(0b1100000) = 0b100000 = 32
+    // lsb(64)  = lsb(0b1000000) = 0b1000000 = 64
+    private int lsb(int i) {
+        // Isolate the lowest one bit value
+        return Integer.lowestOneBit(i);
+    }
+
+    // Computes the prefix sum from [1, i], one based
+    public long prefixSum(int i) {
+        long sum = 0L;
+        while ( i!=0 ) {
+            sum += tree[i];
+            i &= ~lsb(i);
+        }
+        return sum;
+    }
+
+    // Returns the sum of the interval [i,j], one based
+    public long sum(int i, int j) {
+        if (i<j) {
+            throw new IllegalArgumentException("Make sure j >= i");
+        }
+        return prefixSum(j) - prefixSum(i-1);
+    }
+
+    // Add 'k' to index 'i', one based
+    public void add (int i, long k) {
+        while (i < tree.length) {
+            tree[i] += k;
+            i += lsb(i);
+        }
+    }
+
+    public void set(int i, long k) {
+        long value = sum(i, i);
+        add(i, k-value);
+    }
+
+    public String toString() {
+        return java.util.Arrays.toString(tree);
+    }
+}

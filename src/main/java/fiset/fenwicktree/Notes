@@ -1,0 +1,106 @@
+=============================
+|| Fenwick Tree Motivation ||
+=============================
+
+Given a an array of integer values, find the range sum between index [i,j)
+
+Index   0   1   2   3   4   5   6   7   8   9
+A   =   5   -3  6   1   0   -4  11  6   2   7
+P   =   0   5   2   8   9   9   5   16  22  24  31
+
+Problem: If an element is modified in the original array, then the prefix sum needs to be recomputed
+
+Fenwick Tree (Binary Indexed Tree):
+===================================
+A data structure that supports sum range queries as well as setting values in a static array and getting the value
+of the prefix sum up some index efficiently.
+
+Complexity:
+===========
+Construction    O(n)
+Point Update    O(log(n))
+Range Sum       O(log(n))
+Range Update    O(log(n))
+
+Unlike a regular array, in a Fenwick Tree a specific cell is responsible for other cells as well. The position of the
+least significant bit (LSB) determines the range of responsibility that cell has to the cells below itself.
+
+16  10000                   ||
+15  01111   ||              ||
+14  01110       ||          ||
+13  01101   ||  ||          ||
+12  01100           ||      ||
+11  01011   ||      ||      ||
+10  01010       ||  ||      ||
+09  01001   ||  ||  ||      ||
+08  01000               ||  ||
+07  00111   ||          ||  ||
+06  00110       ||      ||  ||
+05  00101   ||  ||      ||  ||
+04  00100           ||  ||  ||
+03  00011   ||      ||  ||  ||
+02  00010       ||  ||  ||  ||
+01  00001   ||  ||  ||  ||  ||
+
+Compute the interval sum between [11,15]
+= Prefix sum of [1,15] - Prefix sum of [1,11)
+= (A[15]+A[14]+A[12]+A[8]) - (A[10]+A[8])
+
+Range Query Algorithm:
+======================
+To do a range query from [i,j] both inclusive a Fenwick tree of size N:
+
+function prefixSum(i):
+    sum := 0
+    while i != 0:
+        sum = sum + tree[i]
+        i = i - LSB(i)
+    return sum
+
+function rangeQuery(i,j):
+    return prefixSum(j) - prefixSum(i-1)
+
+Where LSB returns the value of the least significant bit.
+
+================================
+|| Fenwick Tree Point Updates ||
+================================
+
+Instead of querying a range to find the interval sum we want to update a cell in our array.
+
+Point Update Algorithm:
+=======================
+
+To update the cell at index i in the Fenwick tree of size N:
+
+function add(i, x):
+    while i < N:
+        tree[i] = tree[i] + x
+        i = i + LSB(i)
+
+where LSB returns the value of the least significant bit.
+
+===============================
+|| Fenwick Tree Construction ||
+===============================
+
+o Naive Construction:
+----------------------
+Let A be an array of values. For each element in A at index i do a point update on the Fenwick tree with a value of
+A[i]. There are n elements and each point update takes O(log(n)) for a total of O(n * log{(n)), can we do better?
+
+Construction Algorithm:
+=======================
+
+function construct(values):
+    N := length(values)
+
+    # clone the values array since we're doing in place operations
+    tree = deepCopy(values)
+
+    for i = 1,2,3 ... N:
+        j := i + LSB(i)
+        if j < N:
+            tree[j] = tree[j] + tree[i]
+
+    return tree

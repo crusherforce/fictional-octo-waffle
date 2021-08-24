@@ -1,0 +1,33 @@
+============================
+|| Indexed Priority Queue ||
+============================
+
+o What is an Indexed Priority Queue?
+o An Indexed Priority Queue is a traditional priority queue variant which on top of the
+regular PQ operations supports quick updates and deletions of key-value pairs.
+
+IPQ ADT Interface
+-----------------
+    Op                          Indexed Binary Heap PQ
+delete(ki)                              O(log(n))
+valueOf(ki)                             O(1)
+contains(ki)                            O(1)
+peekMinKeyIndex()                       O(1)
+pollMinKeyIndex()                       O(log(n))
+peekMinValue()                          O(1)
+pollMinValue()                          O(log(n))
+insert(ki, value)                       O(log(n))
+update(ki, value)                       O(log(n))
+decreaseKey(ki, value)                  O(log(n))
+increaseKey(ki, value)                  O(log(n))
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,24 @@
+===================================================
+|| Longest Common Substring Problem Suffix Array ||
+===================================================
+
+S1 = abca,   S2 = bcad,   S3 = daca
+
+To find the LCS first create a new larger string T which is the concatenation of all the
+strings Si separated by 'unique sentinels'.
+
+T = S1 + '#' + S2 + '$' + S3 + '%' = abca#bcad$daca%
+
+NOTE: The sentinels must be unique and lexicographically less than any of the characters
+contained in any of the strings Si.
+
+===================
+|| LCS Algorithm ||
+===================
+
+Things can get more messy when suffixes of different colours are not exactly adjacent.
+
+Use a sliding window to capture the correct amount of suffix colours. At each step advance
+the bottom endpoint or adjust the top endpoint such that the window contains exactly K
+suffixes of different colours.
+
